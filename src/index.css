@@ -1,0 +1,81 @@
+@import "tailwindcss";
+
+/* Global base styles */
+html { scroll-behavior: smooth; }
+body { @apply bg-[#0d0d0d] text-neutral-200 antialiased; font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji'; }
+
+/* Luxury theme CSS variables for easy theming */
+:root{
+  --lux-bg: #0d0d0d;           /* near-black */
+  --lux-ink: #e7e1d8;         /* warm beige */
+  --lux-muted: #a89f94;       /* muted beige */
+  --lux-accent: #b08d57;      /* soft gold */
+}
+
+/* Parallax helpers */
+.parallax-bg { @apply bg-fixed bg-cover bg-center; }
+.backdrop-blur-soft { backdrop-filter: blur(6px); }
+.shadow-lux { box-shadow: 0 10px 30px rgba(0,0,0,0.35); }
+
+/* Masonry helpers */
+.masonry { column-gap: 1rem; }
+.masonry > * { break-inside: avoid; margin-bottom: 1rem; }
+
+/* Typography tweaks */
+.display { @apply tracking-tight font-semibold; font-family: 'Playfair Display', serif; }
+.subtitle { @apply text-neutral-300; }
+
+/* Toast animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOutDown {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.3s ease-out forwards;
+}
+
+.animate-fade-out-down {
+  animation: fadeOutDown 0.3s ease-in forwards;
+}
+
+/* Toast styles */
+.toast-enter {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.toast-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.toast-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.toast-exit-active {
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: opacity 300ms, transform 300ms;
+}
+
