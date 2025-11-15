@@ -8,7 +8,7 @@
 
 const KEY = 'sr_cms'
 const AUTH_KEY = 'sr_auth' // legacy local auth flag (kept for compatibility)
-const   TOKEN_KEY = 'sr_jwt'
+const TOKEN_KEY = 'sr_jwt'
 const API_BASE = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_URL) || 'http://localhost:5000'
 
 async function api(path, { method = 'GET', body, auth = false } = {}) {
@@ -170,8 +170,9 @@ export async function login(username, password) {
   return true
 }
 
-export function logout() {
+export async function logout() {
   // Simply remove the JWT token and auth flags
+
   localStorage.removeItem(TOKEN_KEY)
   //localStorage.removeItem(AUTH_KEY)
   
@@ -191,20 +192,24 @@ export function isAuthed() {
 // Section-specific server saves
 async function saveProjects(projects) {
   const resp = await api('/api/projects', { method: 'PATCH', body: projects, auth: true })
-  const data = getData(); data.projects = resp?.data || projects; setData(data)
+  await fetchAndCache().then(setStore)
 }
 
 async function saveTestimonials(testimonials) {
   const resp = await api('/api/testimonials', { method: 'PATCH', body: testimonials, auth: true })
-  const data = getData(); data.testimonials = resp?.data || testimonials; setData(data)
+  //const data = getData(); data.testimonials = resp?.data || testimonials; setData(data)
+   await fetchAndCache().then(setStore)
 }
 
 async function saveAbout(about) {
   const resp = await api('/api/about', { method: 'PATCH', body: about, auth: true })
-  const data = getData(); data.about = resp?.data || about; setData(data)
+ // const data = getData(); data.about = resp?.data || about; setData(data)
+  await fetchAndCache().then(setStore)
 }
 
 async function saveContact(contact) {
   const resp = await api('/api/contact', { method: 'PATCH', body: contact, auth: true })
-  const data = getData(); data.contact = resp?.data || contact; setData(data)
+  await fetchAndCache().then(setStore)
+  //const data = getData(); data.contact = resp?.data || contact; setData(data)
+
 }

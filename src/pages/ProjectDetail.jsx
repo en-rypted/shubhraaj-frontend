@@ -33,8 +33,8 @@ const ProjectDetail = () => {
 
       <div className="masonry columns-1 sm:columns-2 lg:columns-3">
         {(project.photos || []).map((src, idx) => (
-          <button key={idx} onClick={() => setActive(src)} className="group w-full block overflow-hidden rounded-xl border border-white/10">
-            <img src={src} alt={`${project.title} ${idx+1}`} className="w-full h-auto transition-transform duration-500 group-hover:scale-105" loading="lazy" />
+          <button key={idx} onClick={() => setActive(src.url)} className="group w-full block overflow-hidden rounded-xl border border-white/10">
+            <img src={src.url} alt={`${project.title} ${idx+1}`} className="w-full h-auto transition-transform duration-500 group-hover:scale-105" loading="lazy" />
           </button>
         ))}
       </div>

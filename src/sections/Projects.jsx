@@ -35,7 +35,7 @@ const Projects = () => {
           <div key={p.slug} className="break-inside-avoid mb-4">
             <Link to={`/project/${p.slug}`} className="group w-full block overflow-hidden rounded-xl border border-white/10">
               <img
-                src={p.photos?.[0]}
+                src={p.photos?.[0].url}
                 alt={p.title}
                 className="w-full h-auto transition-transform duration-500 group-hover:scale-105"
                 loading="lazy"

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useCallback } from 'react'
+import { useEffect, useMemo, useState, useCallback, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useToast } from '../components/Toast'
 import {
@@ -19,7 +19,101 @@ import {
 const makeSlug = (t = '') =>
   t.toLowerCase().trim().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-')
 
+const SmallButton = ({
+  children,
+  onClick,
+  type = "button",
+  variant = "primary",
+  size = "md",
+  disabled = false,
+  className = ""
+}) => {
+  const base =
+    "rounded-full transition-colors duration-200 font-medium inline-flex items-center justify-center " +
+    "disabled:opacity-50 disabled:cursor-not-allowed";
+
+  const sizes = {
+    xs: "px-2 py-1 text-xs",     // ⭐ your requested XS size
+    sm: "px-3 py-1 text-sm",
+    md: "px-4 py-1.5 text-base",
+    lg: "px-5 py-2 text-lg"
+  };
+
+  const variants = {
+    primary:
+      "border border-[var(--lux-accent)]/30 text-[var(--lux-accent)] hover:bg-[var(--lux-accent)]/10",
+    info: "border border-blue-500/30 text-blue-500 hover:bg-blue-500/10",
+    danger: "border border-red-500/30 text-red-500 hover:bg-red-500/10",
+    success: "border border-green-500/30 text-green-500 hover:bg-green-500/10",
+    warning: "border border-amber-500/30 text-amber-600 hover:bg-amber-500/10",
+    outline:
+      "border border-gray-400/40 text-gray-700 hover:bg-gray-300/10",
+  };
+
+  return (
+    <button
+      type={type}
+      onClick={onClick}
+      disabled={disabled}
+      className={`${base} ${sizes[size]} ${variants[variant]} ${className}`}
+    >
+      {children}
+    </button>
+  );
+};
+
+
+
+
+
 // Button component with loading state and animations
+// const Button = ({ 
+//   children, 
+//   onClick, 
+//   disabled = false, 
+//   isLoading = false, 
+//   className = '',
+//   variant = 'primary',
+//   type = 'button',
+//   size = 'md'
+// }) => {
+//   const baseStyles = 'px-4 py-2 rounded-md font-medium transition-all duration-200 transform active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed'
+  
+//   const variants = {
+//     primary: 'bg-[var(--lux-accent)] text-white hover:bg-opacity-90 focus:ring-[var(--lux-accent)]',
+//     danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500',
+//     secondary: 'bg-gray-600 text-white hover:bg-gray-700 focus:ring-gray-500',
+//     outline: 'border border-[var(--lux-accent)] text-[var(--lux-accent)] hover:bg-[var(--lux-accent)] hover:bg-opacity-10 focus:ring-[var(--lux-accent)]'
+//   }
+
+//   const sizes = {
+//     sm: 'text-sm px-3 py-1.5',
+//     md: 'text-base px-4 py-2',
+//     lg: 'text-lg px-6 py-3'
+//   }
+
+//   return (
+//     <button
+//       type={type}
+//       onClick={onClick}
+//       disabled={disabled || isLoading}
+//       className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${className} relative overflow-hidden`}
+//     >
+//       <span className={`flex items-center justify-center ${isLoading ? 'opacity-0' : 'opacity-100'}`}>
+//         {children}
+//       </span>
+//       {isLoading && (
+//         <div className="absolute inset-0 flex items-center justify-center">
+//           <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+//             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+//             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+//           </svg>
+//         </div>
+//       )}
+//     </button>
+//   )
+// }
+
 const Button = ({ 
   children, 
   onClick, 
@@ -30,42 +124,67 @@ const Button = ({
   type = 'button',
   size = 'md'
 }) => {
-  const baseStyles = 'px-4 py-2 rounded-md font-medium transition-all duration-200 transform active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed'
-  
+
+  const baseStyles =
+    'relative px-4 py-2 rounded-md font-medium cursor-pointer overflow-hidden ' +
+    'transition-all duration-300 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed ' +
+    'focus:outline-none focus:ring-2 focus:ring-offset-2 hover:-translate-y-[2px] hover:shadow-[0_4px_14px_rgba(0,0,0,0.15)]';
+
+  // ✨ Shine overlay
+  const shine =
+    'after:content-[""] after:absolute after:top-0 after:left-[-120%] after:w-[120%] after:h-full ' +
+    'after:bg-gradient-to-r after:from-transparent after:via-white/30 after:to-transparent ' +
+    'after:skew-x-[20deg] after:transition-all after:duration-700 hover:after:left-[120%]';
+
+  // 💧 Ripple glow
+  const ripple =
+    'before:content-[""] before:absolute before:inset-0 before:rounded-md before:bg-black/10 ' +
+    'before:scale-0 active:before:scale-100 before:opacity-0 active:before:opacity-100 ' +
+    'before:transition-all before:duration-300';
+
   const variants = {
-    primary: 'bg-[var(--lux-accent)] text-white hover:bg-opacity-90 focus:ring-[var(--lux-accent)]',
-    danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500',
-    secondary: 'bg-gray-600 text-white hover:bg-gray-700 focus:ring-gray-500',
-    outline: 'border border-[var(--lux-accent)] text-[var(--lux-accent)] hover:bg-[var(--lux-accent)] hover:bg-opacity-10 focus:ring-[var(--lux-accent)]'
-  }
+    primary: 'bg-[var(--lux-accent)] text-black hover:bg-opacity-90 focus:ring-[var(--lux-accent)]',
+    danger: 'bg-red-600 hover:bg-red-700 focus:ring-red-500',
+    secondary: 'bg-gray-300 hover:bg-gray-700 focus:ring-gray-500',
+    outline:
+      'border border-[var(--lux-accent)] hover:bg-[var(--lux-accent)] hover:bg-opacity-10 focus:ring-[var(--lux-accent)]'
+  };
 
   const sizes = {
     sm: 'text-sm px-3 py-1.5',
     md: 'text-base px-4 py-2',
     lg: 'text-lg px-6 py-3'
-  }
+  };
 
   return (
     <button
       type={type}
       onClick={onClick}
       disabled={disabled || isLoading}
-      className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${className} relative overflow-hidden`}
+      className={`${baseStyles} ${shine} ${ripple} ${variants[variant]} ${sizes[size]} ${className}`}
     >
-      <span className={`flex items-center justify-center ${isLoading ? 'opacity-0' : 'opacity-100'}`}>
+      {/* Button text */}
+      <span className={`flex items-center justify-center transition-opacity duration-200 ${isLoading ? 'opacity-0' : 'opacity-100'}`}>
         {children}
       </span>
+
+      {/* Loading spinner */}
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center">
-          <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <svg className="animate-spin h-5 w-5 text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
           </svg>
         </div>
       )}
     </button>
-  )
-}
+  );
+};
+
 
 const Section = ({ title, children }) => (
   <section className="rounded-2xl border border-white/10 bg-neutral-900/60 p-6 shadow-lux">
@@ -88,7 +207,9 @@ const AdminDashboard = () => {
   const [pTitle, setPTitle] = useState('')
   const [pSlug, setPSlug] = useState('')
   const [pDesc, setPDesc] = useState('')
-  const [pPhotos, setPPhotos] = useState('')
+  const [pPhotos, setPPhotos] = useState([])
+  const [isDragging, setIsDragging] = useState(false)
+  const fileInputRef = useRef(null)
   const [editSlug, setEditSlug] = useState('')
   const [isLoading, setIsLoading] = useState({
     addProject: false,
@@ -98,7 +219,9 @@ const AdminDashboard = () => {
     removeTestimonial: false,
     saveContact: false,
     saveAbout: false,
-    saveMaps: false
+    saveMaps: false,
+    refresh: false,
+    logout: false,
   })
 
   // Update loading state helper
@@ -111,19 +234,83 @@ const AdminDashboard = () => {
 
   useEffect(() => { setPSlug(makeSlug(pTitle)) }, [pTitle])
 
+  // File handling functions
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files)
+    handleFiles(files)
+  }
+
+  const handleDragOver = (e) => {
+    e.preventDefault()
+    setIsDragging(true)
+  }
+
+  const handleDragLeave = () => {
+    setIsDragging(false)
+  }
+
+  const handleDrop = (e) => {
+    e.preventDefault()
+    setIsDragging(false)
+    const files = Array.from(e.dataTransfer.files)
+    handleFiles(files)
+  }
+
+  const handleFiles = (files) => {
+    const imageFiles = files.filter(file => file.type.startsWith('image/'))
+    if (imageFiles.length !== files.length) {
+      toast('Only image files are allowed', 'warning')
+    }
+    
+    const newPhotos = imageFiles.map(file => ({
+      file,
+      preview: URL.createObjectURL(file)
+    }))
+    
+    setPPhotos(prev => [...prev, ...newPhotos])
+  }
+
+  const removeImage = (index) => {
+    setPPhotos(prev => prev.filter((_, i) => i !== index))
+  }
+
+  const uploadImage = async (file, projectTitle) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", import.meta.env.VITE_PRESET);
+    formData.append("folder", `shubhraaj/projects/${projectTitle}`);
+
+    const res = await fetch(
+      `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUD}/image/upload`,
+      { method: "POST", body: formData }
+    );
+
+  return res.json();
+};
+
   const onAddProject = async (e) => {
     e.preventDefault()
     if (!pTitle || !pSlug) {
       toast('Please fill in all required fields', 'error')
       return
     }
+    
+    // In a real app, you would upload the files to a server here
+    // and get back the URLs to store in your database
+    // For now, we'll just use the file names as placeholders
+    const photoUrls = await Promise.all(pPhotos.map(async (photo) =>{
+      const res = await uploadImage(photo.file, pTitle)
+      return {url: res.secure_url, publicId: res.public_id}
+    }))
+    console.log(photoUrls);
+    
     setLoading('addProject', true)
     try {
       const project = {
         title: pTitle,
         slug: pSlug,
         description: pDesc,
-        photos: pPhotos.split(',').map(s => s.trim()).filter(Boolean),
+        photos: photoUrls
       }
       await addProject(project)
       await fetchAndCache().then(setStore)
@@ -131,7 +318,10 @@ const AdminDashboard = () => {
       setPTitle('')
       setPSlug('')
       setPDesc('')
-      setPPhotos('')
+      setPPhotos([])
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
     } catch (error) {
       console.error('Error adding project:', error)
       toast(error?.message || 'Failed to add project', 'error')
@@ -147,7 +337,11 @@ const AdminDashboard = () => {
     setPTitle(p.title)
     setPSlug(p.slug)
     setPDesc(p.description)
-    setPPhotos((p.photos || []).join(', '))
+    // Convert stored photo URLs to the new format
+    setPPhotos((p.photos || []).map(photo => ({
+      file: { name: photo.publicId.split('/').pop() || 'image.jpg' },
+      preview: photo.url
+    })))
   }
 
   const saveEdit = async (e) => {
@@ -155,11 +349,14 @@ const AdminDashboard = () => {
     if (!editSlug || !pTitle || !pSlug) return
     setLoading('saveEdit', true)
     try {
-      const project = { 
+      const project =   { 
         title: pTitle, 
         slug: pSlug, 
         description: pDesc, 
-        photos: pPhotos.split(',').map(s => s.trim()).filter(Boolean) 
+        photos: pPhotos.map(photo => ({
+          url: photo.preview,
+          publicId: photo.file.name
+        })) 
       }
       await updateProject(editSlug, project)
       await fetchAndCache().then(setStore)
@@ -168,7 +365,10 @@ const AdminDashboard = () => {
       setPTitle('')
       setPSlug('')
       setPDesc('')
-      setPPhotos('')
+      setPPhotos([])
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
     } catch (error) {
       console.error('Error updating project:', error)
       toast(error?.message || 'Failed to update project', 'error')
@@ -251,8 +451,8 @@ const AdminDashboard = () => {
     }
     setLoading('saveContact', true)
     try {
-      await setContact(contact)
-      await fetchAndCache().then(setStore)
+      setContact(contact)
+      //await fetchAndCache().then(setStore)
       toast('Contact information saved successfully!')
     } catch (error) {
       console.error('Error saving contact:', error)
@@ -320,16 +520,28 @@ const AdminDashboard = () => {
         <button onClick={() => setTab('about')} className={`px-3 py-2 rounded-lg text-sm ${tab==='about'?'bg-white/10':'bg-white/5'}`}>About</button>
       </div>
       <div className="flex items-center gap-3">
-        <button onClick={() => fetchAndCache().then(setStore)} className="text-sm rounded-full border border-white/10 px-3 py-1">Refresh</button>
-        <button 
-          onClick={async () => { 
+        <SmallButton size='xs' onClick={() =>{ setLoading('refresh', true); fetchAndCache()
+          .then(setStore)
+          .catch(() => {})
+          .finally(() => {setLoading('refresh', false); toast('Data refreshed successfully!')})}} isLoading={isLoading.refresh} variant='info'>Refresh</SmallButton>
+        <SmallButton 
+          onClick={async () => {  
+            setLoading('logout', true)
             await logout(); 
+            toast('Logged out successfully!')
+            setLoading('logout', false)
             navigate('/'); 
           }} 
-          className="text-sm text-neutral-300 hover:text-white"
+          variant='warning'
+          size='xs'
+          isLoading={isLoading.logout}
+          disabled={isLoading.logout}
+
         >
+
+
           Logout
-        </button>
+        </SmallButton>
       </div>
     </div>
   )
@@ -343,11 +555,65 @@ const AdminDashboard = () => {
       {tab === 'projects' && (
         <div className="grid lg:grid-cols-2 gap-6">
           <Section title={editSlug ? 'Edit Project' : 'Add Project'}>
-            <form onSubmit={editSlug ? (e)=>{e.preventDefault(); saveEdit()} : onAddProject} className="grid gap-3">
+            <form onSubmit={editSlug ?  saveEdit : onAddProject} className="grid gap-3">
               <input value={pTitle} onChange={(e)=>setPTitle(e.target.value)} placeholder="Title" className="bg-black/40 border border-white/10 rounded-lg px-4 py-3" />
               <input value={pSlug} onChange={(e)=>setPSlug(makeSlug(e.target.value))} placeholder="Slug" className="bg-black/40 border border-white/10 rounded-lg px-4 py-3" />
               <textarea value={pDesc} onChange={(e)=>setPDesc(e.target.value)} placeholder="Description" rows={4} className="bg-black/40 border border-white/10 rounded-lg px-4 py-3" />
-              <textarea value={pPhotos} onChange={(e)=>setPPhotos(e.target.value)} placeholder="Photo URLs (comma separated)" rows={3} className="bg-black/40 border border-white/10 rounded-lg px-4 py-3" />
+              <div 
+                className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${isDragging ? 'border-[var(--lux-accent)] bg-white/5' : 'border-white/10'}`}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+              >
+                <div className="space-y-4">
+                  <div className="flex flex-col items-center justify-center space-y-2">
+                    <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <p className="text-sm text-gray-400">
+                      {isDragging ? 'Drop images here' : 'Drag & drop images here, or'}
+                    </p>
+                    <label className="cursor-pointer text-[var(--lux-accent)] hover:underline">
+                      Browse files
+                      <input
+                        type="file"
+                        ref={fileInputRef}
+                        className="hidden"
+                        multiple
+                        accept="image/*"
+                        onChange={handleFileChange}
+                      />
+                    </label>
+                  </div>
+                  
+                  {pPhotos.length > 0 && (
+                    <div className="mt-4">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                        {pPhotos.map((photo, index) => (
+                          <div key={index} className="relative group">
+                            <img 
+                              src={photo.preview} 
+                              alt={`Preview ${index + 1}`} 
+                              className="w-full h-24 object-cover rounded-md"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => removeImage(index)}
+                              className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                              title="Remove image"
+                            >
+                              ×
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                      <p className="mt-2 text-xs text-gray-400">
+                        {pPhotos.length} image{pPhotos.length !== 1 ? 's' : ''} selected
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
               <div className="flex gap-3">
                 <Button 
                   type="submit" 
@@ -378,20 +644,24 @@ const AdminDashboard = () => {
                     <div className="text-xs text-neutral-400">/{p.slug}</div>
                   </div>
                   <div className="flex gap-3 text-sm">
-                    <button 
+                    <SmallButton 
                       onClick={() => startEdit(p.slug)}
-                      className="px-3 py-1 border border-blue-500/30 text-blue-400 hover:bg-blue-500/10 rounded transition-colors"
-                      disabled={isLoading.deleteProject}
+                      variant='info'
+                      size='xs'
+                      isLoading={isLoading.editProject}
+                      disabled={isLoading.editProject}
                     >
                       Edit
-                    </button>
-                    <button 
+                    </SmallButton>
+                    <SmallButton 
                       onClick={() => onDelete(p.slug)}
-                      className="px-3 py-1 border border-red-500/30 text-red-400 hover:bg-red-500/10 rounded transition-colors"
+                      variant="danger"
                       disabled={isLoading.deleteProject}
+                      isLoading={isLoading.deleteProject}
+                      size='xs'
                     >
-                      {isLoading.deleteProject ? 'Deleting...' : 'Delete'}
-                    </button>
+                      { isLoading.deleteProject ? 'Deleting...' : 'Delete'}
+                    </SmallButton>
                   </div>
                 </div>
               ))}
@@ -426,18 +696,16 @@ const AdminDashboard = () => {
                     <div className="font-medium">{t.name} <span className="text-[var(--lux-accent)]">{'★'.repeat(t.rating)}</span></div>
                     <div className="text-xs text-neutral-400">{t.text}</div>
                   </div>
-                  <button 
+                  <SmallButton 
                     onClick={(e) => {
-                      // Add click animation
-                      e.currentTarget.classList.add('scale-90');
-                      setTimeout(() => e.currentTarget.classList.remove('scale-90'), 150);
                       removeTestimonial(i);
                     }}
-                    className="px-3 py-1 text-sm border border-red-500/30 bg-red-500/10 text-black font-medium rounded transition-all duration-200 hover:bg-red-500/20 hover:scale-105 active:scale-95"
+                    variant="danger"
+                    size="xs"
                     disabled={isLoading.removeTestimonial}
                   >
                     {isLoading.removeTestimonial ? 'Removing...' : 'Remove'}
-                  </button>
+                  </SmallButton>
                 </div>
               ))}
             </div>
@@ -494,14 +762,15 @@ const AdminDashboard = () => {
                   <input value={m.name} onChange={(e)=>{ const v=[...maps]; v[i] = {...v[i], name:e.target.value}; setMaps(v) }} placeholder="Name" className="bg-black/40 border border-white/10 rounded-lg px-3 py-2" />
                   <input value={m.url} onChange={(e)=>{ const v=[...maps]; v[i] = {...v[i], url:e.target.value}; setMaps(v) }} placeholder="Google Maps Embed URL" className="bg-black/40 border border-white/10 rounded-lg px-3 py-2" />
                   <div className="md:col-span-3 text-right">
-                    <button 
-                      type="button" 
+                    <SmallButton  
                       onClick={()=>removeMap(i)}
-                      className="px-3 py-1 text-sm border border-red-500/30 text-red-400 hover:bg-red-500/10 rounded transition-colors"
+                      variant="danger"
+                      size="xs"
+                      isLoading={isLoading.saveMaps}
                       disabled={isLoading.saveMaps}
                     >
                       Remove
-                    </button>
+                    </SmallButton>
                   </div>
                 </div>
               ))}
