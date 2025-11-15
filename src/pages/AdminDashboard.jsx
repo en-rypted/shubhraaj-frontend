@@ -17,7 +17,14 @@ import {
 } from '../lib/cms'
 
 const makeSlug = (t = '') =>
-  t.toLowerCase().trim().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-')
+  t
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9\s\-\/]/g, '-')   // replace invalid chars with hyphen
+    .replace(/\s+/g, '-')               // spaces → hyphens
+    .replace(/-+/g, '-')                // collapse multiple hyphens
+    .replace(/\/+/g, '/');              // collapse multiple slashes
+
 
 const SmallButton = ({
   children,
@@ -299,7 +306,7 @@ const AdminDashboard = () => {
     // and get back the URLs to store in your database
     // For now, we'll just use the file names as placeholders
     const photoUrls = await Promise.all(pPhotos.map(async (photo) =>{
-      const res = await uploadImage(photo.file, pTitle)
+      const res = await uploadImage(photo.file, pSlug)
       return {url: res.secure_url, publicId: res.public_id}
     }))
     console.log(photoUrls);
