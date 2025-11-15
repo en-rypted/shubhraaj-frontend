@@ -25,12 +25,12 @@ const Header = () => {
   return (
     <header className={`fixed top-0 inset-x-0 z-50 transition-colors ${solid ? 'bg-black/80 backdrop-blur-soft border-b border-white/10' : 'bg-transparent'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        <a href="#home" className="text-lg md:text-xl font-semibold tracking-wide" onClick={() => {
+        <a href="#home" className="text-lg md:text-xl subtitle font-semibold tracking-wide" onClick={() => {
           const next = tap + 1
           setTap(next)
           if (next >= 6) { setTap(0); navigate('/admin') }
         }} title="">
-          <span className="text-[var(--lux-accent)]">Shubh</span>Raaj
+          <span className="text-[var(--lux-accent)]">SHUBH</span>RAAJ
         </a>
         <nav className="hidden md:flex items-center gap-8">
           {navItems.map((item) => (

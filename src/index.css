@@ -22,8 +22,16 @@ body { @apply bg-[#0d0d0d] text-neutral-200 antialiased; font-family: 'Inter', s
 .masonry > * { break-inside: avoid; margin-bottom: 1rem; }
 
 /* Typography tweaks */
-.display { @apply tracking-tight font-semibold; font-family: 'Playfair Display', serif; }
-.subtitle { @apply text-neutral-300; }
+.display { 
+  @apply tracking-tight; 
+  font-family: 'Belleza', sans-serif; 
+}
+
+.subtitle { 
+  @apply text-neutral-300; 
+  font-family: 'Belleza', sans-serif;
+}
+
 
 /* Toast animations */
 @keyframes fadeInUp {

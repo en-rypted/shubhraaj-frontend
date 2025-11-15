@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import SectionWrapper from '../components/SectionWrapper'
 import contactImg from '../assets/images/contact.jpg'
 import { getData } from '../lib/cms'
+import Button from '../components/Button'
 
 const Contact = () => {
   return (
@@ -16,7 +17,7 @@ const Contact = () => {
               <input className="bg-black/40 border border-white/10 rounded-lg px-4 py-3 placeholder:text-neutral-500" placeholder="Name"/>
               <input type="email" className="bg-black/40 border border-white/10 rounded-lg px-4 py-3 placeholder:text-neutral-500" placeholder="Email"/>
               <textarea rows="5" className="bg-black/40 border border-white/10 rounded-lg px-4 py-3 placeholder:text-neutral-500" placeholder="Message"/>
-              <button type="submit" className="rounded-full bg-[var(--lux-accent)] text-black px-6 py-3 w-fit">Send Message</button>
+              <Button type="submit" className="w-fit">Send Message</Button>
             </form>
             <div className="mt-6 text-sm text-neutral-300">
               {(() => { const c = getData().contact; return (

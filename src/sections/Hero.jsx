@@ -2,6 +2,7 @@ import SectionWrapper from '../components/SectionWrapper'
 import Button from '../components/Button'
 import { motion } from 'framer-motion'
 import heroImg from '../assets/images/hero.jpg'
+import logo from '../assets/logo.png'
 
 const Hero = () => {
   return (
@@ -9,22 +10,45 @@ const Hero = () => {
       <div className="absolute inset-0 bg-black/70" />
       <SectionWrapper>
         <div className="h-[100svh] flex flex-col items-center justify-center text-center">
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="mb-6"
+          >
+            <div className="flex flex-col items-center">
+              <img 
+                src={logo} 
+                alt="ShubhRaaj Interiors Logo" 
+                className="h-40 md:h-48 w-auto mx-auto drop-shadow-[0_2px_15px_rgba(0,0,0,0.5)]"
+              />
+              <motion.p 
+                className="text-white/80 text-lg md:text-xl mt-2 tracking-widest font-light italic drop-shadow-[0_2px_15px_rgba(0,0,0,0.5)] font-sans"
+                style={{ fontFamily: 'Inter, sans-serif' }}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4, duration: 0.8 }}
+              >
+                designing dreams...
+              </motion.p>
+            </div>
+          </motion.div>
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
             className="display text-5xl md:text-7xl lg:text-8xl mb-4 leading-[0.95] drop-shadow-[0_3px_22px_rgba(0,0,0,0.65)]"
           >
-            <span className="text-[#f5efe6]">ShubhRaaj</span>
-            <span className="text-[#f5efe6]"> Interiors</span>
+            <span className="text-[#f5efe6]">SHUBH</span>
+            <span className="text-[#f5efe6]">RAAJ</span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.8 }}
-            className="subtitle text-lg md:text-2xl max-w-2xl drop-shadow-[0_1px_12px_rgba(0,0,0,0.6)] text-[#efe9de]"
+            transition={{ delay: 0.4, duration: 0.8 }}
+            className="subtitle text-3xl md:text-4xl max-w-2xl drop-shadow-[0_1px_12px_rgba(0,0,0,0.6)] text-[#efe9de]"
           >
-            Crafting Spaces. Creating Stories.
+            Interior & Creations 
           </motion.p>
           <motion.div
             initial={{ opacity: 0 }}
@@ -32,7 +56,7 @@ const Hero = () => {
             transition={{ delay: 0.4, duration: 0.8 }}
             className="mt-10 flex flex-col sm:flex-row gap-4"
           >
-            <a href="#projects"><Button>View Projects</Button></a>
+            <a href="#projects"><Button >View Projects</Button></a>
             <a href="#contact"><Button variant="ghost">Contact Us</Button></a>
           </motion.div>
         </div>
